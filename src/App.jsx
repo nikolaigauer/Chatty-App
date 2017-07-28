@@ -1,50 +1,77 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import MessageList from './messageList.jsx';
 import Chatbar from './chatbar.jsx';
 
-
-// let currentUser = {
-//       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-//       messages: [
-//         {
-//           username: "Bob",
-//           content: "Has anyone seen my marbles?",
-//         },
-//         {
-//           username: "Anonymous",
-//           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-//         }
-//       ]
-//     };
-
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: { name: "Anonymous" }, 
+      messages: [ {
+        username: "CHATTYAPP",
+        content: "WELCOME TO CHATLAND"} ]
     };
   }
 
+  componentDidMount () {
+    this.chattySocket = new WebSocket("ws://localhost:3001", ["protocolOne", "protocolTwo"]);
+  
+    this.chattySocket.onopen = (event) => {
+      this.chattySocket.onmessage = (event) => {
+      var message = JSON.parse(event.data);
+      const messages = this.state.messages.concat(message)
+      
+      // switch(data.type) {
+      // case "incomingMessage":
+      //   message.type = 'incomingMessage';
+       
+      //   // handle incoming message
+      //   break;
+      // case "incomingNotification":
+      //   message.type = 'incomingNotification'
+      //   // handle incoming notification
+      //   break;
+      // default:
+      //   // show an error in the console if the message type is unknown
+      //   throw new Error("Unknown event type " + data.type);
+      //   }
+      }
+
+      this.setState({ messages: messages })
+
+      }
+    };
+  }
+
+  handleAddMessage(message) {
+    const newMessage = { 
+      username: this.state.currentUser.name, 
+      content: message
+    };
+
+    this.chattySocket.send(JSON.stringify(newMessage))
+  }
+
+  handleUserName(event) {
+    this.setState({currentUser: { name: event.target.value }})
+  }
+  
   render() {
+      
     return (
       <div>
-          <nav className="navbar">
-            <a href="/" className="navbar-brand">Chatty</a>
-          </nav>
-          <MessageList/>
-          <Chatbar>
-            <li> {this.state.currentUser.name} </li>
-          </Chatbar>
+        <nav className="navbar">
+          <a href="/" className="navbar-brand">Chatty</a>
+        </nav>
+        <MessageList
+          messages={this.state.messages}
+        />
+        <Chatbar
+          changeUser={this.handleUserName.bind(this)}
+          name={this.state.currentUser.name}
+          addMessage={this.handleAddMessage.bind(this)}
+        />
       </div>
     );
   }

@@ -31,11 +31,13 @@ body {
 }
 
 .chatbar-message {
-  flex: 8;
+  // flex: 8;
+  width: 800px;
 }
 
 .chatbar-username {
-  flex: 2;
+  // flex: 2;
+  width: 200px;
 }
 
 .message {
