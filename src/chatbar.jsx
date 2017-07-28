@@ -12,6 +12,10 @@ class Chatbar extends Component {
     this.setState({message: event.target.value})
   }
 
+  handleNameChange (event) {
+    this.setState({username: event.target.value})
+  }
+
   // Submitting and clearing the chatbar
   handleSubmit (event) {
     event.preventDefault()
@@ -22,11 +26,14 @@ class Chatbar extends Component {
   render() {
     return (
     <footer className="chatbar">
-      <input 
-        className="chatbar-username" 
-        placeholder={this.props.name} 
-        onChange={this.props.changeUser}
-      />
+      <form onSubmit={this.handleSubmit.bind(this)}>
+        <input 
+          className="chatbar-username" 
+          placeholder={this.props.name} 
+          onChange={this.props.changeUser}
+          
+        />
+      </form>
       <form onSubmit={this.handleSubmit.bind(this)}>
         <input
           className="chatbar-message"
