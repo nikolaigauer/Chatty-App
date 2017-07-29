@@ -4,7 +4,8 @@ class Chatbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: ''
+      message: '',
+      username: ''
     }
   }
 
@@ -16,29 +17,36 @@ class Chatbar extends Component {
     this.setState({username: event.target.value})
   }
 
+
   // Submitting and clearing the chatbar
-  handleSubmit (event) {
+  handleMessageSubmit (event) {
     event.preventDefault()
     this.props.addMessage(this.state.message)
     this.setState({message: ''})
   }
 
+  handleNameSubmit (event) {
+    event.preventDefault()
+    this.props.changeUser(this.state.username)
+    // this.setState({message: ''})
+  }
+
   render() {
     return (
     <footer className="chatbar">
-      <form onSubmit={this.handleSubmit.bind(this)}>
+      <form onSubmit={this.handleNameSubmit.bind(this)}>
         <input 
           className="chatbar-username" 
           placeholder={this.props.name} 
-          onChange={this.props.changeUser}
-          
+          onChange={this.handleNameChange.bind(this)}
+          value={this.state.name}
         />
       </form>
-      <form onSubmit={this.handleSubmit.bind(this)}>
+      <form onSubmit={this.handleMessageSubmit.bind(this)}>
         <input
           className="chatbar-message"
           onChange={this.handleMessageChange.bind(this)}
-          value={this.state.message} 
+          value={this.state.message}
           placeholder="Type a message and hit ENTER" 
         />  
       </form>   

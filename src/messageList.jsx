@@ -3,6 +3,7 @@ import Message from './message.jsx';
 
   
 class MessageList extends Component {
+
   render() {
   const messages = this.props.messages.map((msg, index) => {
     return <Message
@@ -17,7 +18,11 @@ class MessageList extends Component {
         <div> 
           {messages}
         </div>     
+
+        {/* put notification below */}
         <div className="message system">
+           
+        
         </div>
       </main>
     );
