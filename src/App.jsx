@@ -35,9 +35,9 @@ class App extends Component {
         case "incomingNotification":
           message.content = socketData.content
           break;
-        case "clientSum":
+        case "clientCount":
           clientCount.content = socketData.content
-          this.setState({clientCount: socketData});
+          this.setState({clientCount: socketData.content});
           break;
 
         default:
@@ -75,7 +75,7 @@ class App extends Component {
 
       return (
         <div>
-          <Nav clientCount={this.state.onlineCount}/>
+          <Nav clientCount={this.state.clientCount}/>
             <main className="messages">
             <MessageList
               messages={this.state.messages}

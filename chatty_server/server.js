@@ -45,7 +45,9 @@ wss.on('connection', (ws) => {
   clientCount.content = wss.clients.size;
   clientCount.type = "clientCount"
   console.log("Connections:", clientCount.content)
-  wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}));
+  // wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}));
+  broadcastToAll(clientCount)
+
 
   // wss.clients.forEach(client => {
   //   if (client.readyState === WebSocket.OPEN)
@@ -72,8 +74,8 @@ wss.on('connection', (ws) => {
     clientCount.content = wss.clients.size;
     clientCount.type = "clientCount"
     console.log("Connections:", clientCount.content)
-      
-    wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}
+    broadcastToAll(clientCount)
+    // wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}))
     console.log("this is the total after disconnection: ", wss.clients.size)
   });  
 });
