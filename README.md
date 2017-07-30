@@ -1,7 +1,7 @@
 Chatty-App
 =====================
 
-A demonstrationg of a chat application using ReactJS
+A demonstration of a chat application using ReactJS
 
 ### Installation:
 
