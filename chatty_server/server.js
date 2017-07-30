@@ -17,10 +17,10 @@ const wss = new SocketServer({ server });
 // Broadcast function used below
 function broadcastToAll(message) {
   wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(message));
-        }
-      })   
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(message));
+    }
+  });
 }
 
 wss.on('connection', (ws) => {
@@ -32,20 +32,19 @@ wss.on('connection', (ws) => {
   console.log("Connections:", clientCount.content)
   broadcastToAll(clientCount)
 
-
   // Receive, parse then broadcast messages to all clients
   ws.on('message', (data) => {
     const message = JSON.parse(data);
     message.id = uuidv1();
     broadcastToAll(message)
-  })
+  });
 
   // Create, stringify and broadcast object to track current online users as they disconnect
   ws.on('close', () => {
-    wss.emit ('disconnection', ws)
+    wss.emit('disconnection', ws)
     const clientCount = {};
     clientCount.content = wss.clients.size;
     clientCount.type = "clientCount"
     broadcastToAll(clientCount)
-  });  
+  });
 });
