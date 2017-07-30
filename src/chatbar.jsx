@@ -28,7 +28,6 @@ class Chatbar extends Component {
   handleNameSubmit (event) {
     event.preventDefault()
     this.props.changeUser(this.state.username)
-    // this.setState({message: ''})
   }
 
   render() {

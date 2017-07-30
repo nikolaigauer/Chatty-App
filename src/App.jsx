@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import MessageList from './messageList.jsx';
 import Chatbar from './chatbar.jsx';
+import Nav from './Nav.jsx';
+
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      clientCount: 0,
       currentUser: { name: "Anonymous" },
       messages: []
     };
@@ -23,7 +26,7 @@ class App extends Component {
       var socketData = JSON.parse(event.data);
       var message = {}
       var clientCount = {}
-
+          
       switch (socketData.type) {
         case "incomingMessage":
           message.content = socketData.content
@@ -32,32 +35,22 @@ class App extends Component {
         case "incomingNotification":
           message.content = socketData.content
           break;
-        case "clientCount":
-          clientCount.total = socketData.total
-          break;
-        case "me":
-          message.content = socketData.content
+        case "clientSum":
+          clientCount.content = socketData.content
+          this.setState({clientCount: socketData});
           break;
 
         default:
           throw new Error("Unknown event type " + socketData.type);
-
       }
+                  
       const messages = this.state.messages.concat(message)
       this.setState({ messages: messages })
 
-
-
     };
-  }
-    handleActionMessage(message) {
-      const actionMessage = {
-        type: "me",
-        content: "WOOOOOOOO!" + message
-      };
-      this.chattySocket.send(JSON.stringify(actionMessage))
 
-    }
+  }
+    
 
     handleAddMessage(message) {
       const newMessage = {
@@ -69,7 +62,7 @@ class App extends Component {
       this.chattySocket.send(JSON.stringify(newMessage))
     }
 
-    handleUserName(username) {
+    handleUsername(username) {
       const newUsername = {
         type: "incomingNotification",
         content: this.state.currentUser.name + " has changed name to: " + username
@@ -82,19 +75,17 @@ class App extends Component {
 
       return (
         <div>
-          <nav className="navbar">
-            <a href="/" className="navbar-brand">Chatty</a>
-            <div className="navbar-userCounter">users(s) online</div> 
-          </nav>
-          <MessageList
-            messages={this.state.messages}
-          />
-          <Chatbar
-            changeUser={this.handleUserName.bind(this)}
-            name={this.state.currentUser.name}
-            addMessage={this.handleActionMessage.bind(this)}
-            addMessage={this.handleAddMessage.bind(this)}
-          />
+          <Nav clientCount={this.state.onlineCount}/>
+            <main className="messages">
+            <MessageList
+              messages={this.state.messages}
+            />
+            <Chatbar
+              changeUser={this.handleUsername.bind(this)}
+              name={this.state.currentUser.name}
+              addMessage={this.handleAddMessage.bind(this)}
+            />
+          </main>
         </div>
       );
     }

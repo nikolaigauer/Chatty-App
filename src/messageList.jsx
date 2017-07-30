@@ -14,17 +14,15 @@ class MessageList extends Component {
   });
 
     return (
-      <main className="messages">
         <div> 
           {messages}
         </div>     
 
-        {/* put notification below */}
-        <div className="message system">
+        // <div className="message system">
            
         
-        </div>
-      </main>
+        
+        // </div>
     );
   }
 }

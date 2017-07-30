@@ -15,38 +15,65 @@ const server = express()
 // webSockets server
 const wss = new SocketServer({ server });
 
+function broadcastToAll(message) {
+  // const message = JSON.stringify(message);  
+  // wss.clients.forEach(function each(client) {
+  //   safeSend(client, messageAsString);
+  // });
+
+  wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(message));
+        }
+      })   
+
+}
+
+
+function systemMessage(event, clientCount) {
+  const message = {
+    type: "ClientSum",
+    event: event,
+    clientCount: clientCount
+  };
+  return message;
+}
+
 
 wss.on('connection', (ws) => {
-  console.log(wss.clients.size)
-
-  // SO MAYBE TAKE THE CLIENT SHIT OUT OF THE on message function, THEN FIX IT SO IT BROADCASTS TO THE PAGE
-
   const clientCount = {};
-  clientCount.total = wss.clients.size;
+  clientCount.content = wss.clients.size;
   clientCount.type = "clientCount"
-  console.log("Connections:", clientCount.total)
-    
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN)
-      client.send(JSON.stringify(clientCount));
-  })
+  console.log("Connections:", clientCount.content)
+  wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}));
+
+  // wss.clients.forEach(client => {
+  //   if (client.readyState === WebSocket.OPEN)
+  //     client.send(JSON.stringify(clientCount));
+  // })
 
   // This receives messages
   ws.on('message', (data) => {
     const message = JSON.parse(data);
     message.id = uuidv1();
-  
+    
     // This broadcasts messages to all
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(message));
-      }
-    })   
+    // wss.clients.forEach(client => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send(JSON.stringify(message));
+    //   }
+    // })   
+    broadcastToAll(message)
   })
 
   ws.on('close', () => {
     wss.emit ('disconnection', ws)
-    console.log("this is the total after disconnection: ", clientCount.total - wss.clients.size)
+    const clientCount = {};
+    clientCount.content = wss.clients.size;
+    clientCount.type = "clientCount"
+    console.log("Connections:", clientCount.content)
+      
+    wss.broadcast(JSON.stringify({type: 'clientCount', clientCount: clientCount}
+    console.log("this is the total after disconnection: ", wss.clients.size)
   });  
-
 });
