@@ -17,12 +17,6 @@ class MessageList extends Component {
         <div> 
           {messages}
         </div>     
-
-        // <div className="message system">
-           
-        
-        
-        // </div>
     );
   }
 }

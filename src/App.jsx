@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // Sets initial state
     this.state = {
       clientCount: 0,
       currentUser: { name: "Anonymous" },
@@ -15,18 +16,20 @@ class App extends Component {
     };
   }
 
-// implement another type "/me"
-
+  // Receives and handles data from server
   componentDidMount() {
     this.chattySocket = new WebSocket("ws://localhost:3001", ["protocolOne", "protocolTwo"]);
 
+    // Opens websocket
     this.chattySocket.onopen = (event) => {}
-
+    
+    // Parses data from server
     this.chattySocket.onmessage = (event) => {
       var socketData = JSON.parse(event.data);
       var message = {}
       var clientCount = {}
-          
+      
+      // Switch case to sift through types of data from server
       switch (socketData.type) {
         case "incomingMessage":
           message.content = socketData.content
@@ -34,6 +37,8 @@ class App extends Component {
           break;
         case "incomingNotification":
           message.content = socketData.content
+          const notification = this.state.messages.concat(socketData)
+          this.setState({ messages: notification })
           break;
         case "clientCount":
           clientCount.content = socketData.content
@@ -46,12 +51,12 @@ class App extends Component {
                   
       const messages = this.state.messages.concat(message)
       this.setState({ messages: messages })
-
     };
 
   }
     
-
+    // For every new message this function stringifies and sends the message 
+    // as an object with proper keys to server
     handleAddMessage(message) {
       const newMessage = {
         username: this.state.currentUser.name,
@@ -62,17 +67,18 @@ class App extends Component {
       this.chattySocket.send(JSON.stringify(newMessage))
     }
 
+    // Function to notify clients when a user changes their nick
     handleUsername(username) {
       const newUsername = {
         type: "incomingNotification",
         content: this.state.currentUser.name + " has changed name to: " + username
       };
+
       this.setState({ currentUser: { name: username } })
       this.chattySocket.send(JSON.stringify(newUsername))
     }
-
+    
     render() {
-
       return (
         <div>
           <Nav clientCount={this.state.clientCount}/>
@@ -90,4 +96,6 @@ class App extends Component {
       );
     }
   }
+
+
   export default App;
