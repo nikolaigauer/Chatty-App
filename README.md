@@ -11,9 +11,10 @@ A demonstration of a chat application using ReactJS
 ```
 npm install
 npm start
-open http://localhost:3000
-
 ```
+
+3. In your browser, go to http://localhost:3000
+
 
 ### Dependencies
 * React-dom
